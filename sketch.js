@@ -84,7 +84,7 @@ class WorldMap {
     this.goal = { x: -1, y: -1 };
     this.walkable = ['d', 'm', 'g', 'e'];
     this.costs = {
-      e: 1, d: 1, g: 3, m: 6,
+      e: 1, d: 1, g: 2, m: 4,
       r: 10000, t: 10000, w: 10000, b: 10000
     };
     this.setupMap();
@@ -569,7 +569,7 @@ function setup() {
   divSearchTree.position(0, cz * map.rows + mz * 2)
 
   divElement2 = createDiv();
-  divElement2.position(630,map.rows + mz*30)
+  divElement2.position(630,cz* map.rows + mz*3)
   divElement2.html('<h3 class="al">Select  Algorithm :</h3>');
 
   selAlg = createSelect();
@@ -660,6 +660,8 @@ function mySelectEvent() {
 function selectH(){
   htype = selH.value()
   let alg = selAlg.value();
+  let value = selMap.value();
+
 
   canvas.remove();
   divSearchTree.remove();
@@ -671,6 +673,7 @@ function selectH(){
   btnSearch.remove();
   btnClear.remove();
   setup();
+  selMap.selected(value);
   selH.selected(htype);
   selAlg.selected(alg);
 
