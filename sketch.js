@@ -83,6 +83,8 @@ class WorldMap {
     this.cols = 0;
     this.goal = { x: -1, y: -1 };
     this.walkable = ['d', 'm', 'g', 'e'];
+    // START FORMULATION 5 /1 : COST FUNCTION
+
     this.costs = {
       e: 1, d: 1, g: 2, m: 4,
       r: 10000, t: 10000, w: 10000, b: 10000
@@ -90,6 +92,9 @@ class WorldMap {
     this.setupMap();
     this.loadAssets();
   }
+
+      // END FORMULATION 5 /1 
+
 
   setupMap() {
   
@@ -173,15 +178,23 @@ class AgentState {
   loadAssets() {
     this.assets['a'] = loadImage('assets/agent.png')
   }
+  // START FORMULATION 2: ACTION SPACE
 
   actions() {
     return ['moveF', 'turnL', 'turnR'];
   }
+// END FORMULATION 2
+
+// START FORMULATION 5 /2 : COST FUNCTION
 
   cost() {
     let tile = map.data[this.y][this.x];
     return map.costs[tile];
   }
+
+  // END FORMULATION 5 
+
+  // START FORMULATION 3: TRANSITION FUNCTION
 
   transition(action) {
     let x = this.x;
@@ -227,6 +240,8 @@ console.log(`222 : (${x},${y})  direction : ${o}`);
     }
   }
 
+  // END FORMULATION 3
+
   render() {
     let xpos = this.x * cz + mz;
     let ypos = this.y * cz + mz;
@@ -239,18 +254,22 @@ console.log(`222 : (${x},${y})  direction : ${o}`);
       this.angles[this.o]);
   }
 
-
+// START HEURISTIC FUNCTION 1
   manhattan(x0, y0, x1, y1, o) {
     let directionCost = getDirectionCost(x0, y0, x1, y1, o);
     console.log(x0,y0,x1,y1, o);
     console.log(Math.abs(this.x - map.goal.x) +  Math.abs(this.y - map.goal.y)+directionCost*3);
     return Math.abs(this.x - map.goal.x) +  Math.abs(this.y - map.goal.y)+(directionCost);
   }
+// END HEURISTIC FUNCTION 1
 
+
+// START HEURISTIC FUNCTION 2
   euclidean(x0, y0, x1, y1, o) {
     let directionCost = getDirectionCost(x0, y0, x1, y1, o);
     return  Math.round(Math.sqrt(Math.pow(Math.abs(this.x - map.goal.x), 2) + Math.pow(Math.abs(this.y - map.goal.y), 2)))+(directionCost);
   }
+// END HEURISTIC FUNCTION 2
 
   heuristic(type) {
     console.log(type);
@@ -260,12 +279,13 @@ console.log(`222 : (${x},${y})  direction : ${o}`);
   }
 
   
-
+// START FORMULATION 4: GOAL TEST FUNCTION
   isGoal(){
       if(this.x === map.goal.x && this.y === map.goal.y){
         return true
       } return false
   }
+// END FORMULATION 4
 
 }
 
@@ -550,12 +570,13 @@ function preload(map_=map_data) {
   
   map = new WorldMap(map_);
   console.log(map);
+  // START FORMULATION 1: INITIAL STATE
   initState = {x: 1 , y: 1, o: 's'};
   state = new AgentState(initState.x, initState.y, initState.o);
   let start = new SearchNode(state, null, null)
   explorer = new Explorer(start)
   history.push({state, action: null});
-
+// END FORMULATION 1
 }
 
 function setup() {
@@ -719,6 +740,7 @@ function Clear(){
 location.reload();
 }
 
+// START SEARCH ALGORITHM
  async function search(Algorithm, heuristic){
   const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
@@ -745,8 +767,7 @@ location.reload();
         console.log(exploredSet);
         let frontier = frontierPQ.printPriorityQueue();
         console.log(frontier);
-        // let pickNode = frontierPQ.dequeueFunction()
-        // console.log(pickNode);
+
         let pickNode
         let j = 0 ;
         while(!state.isGoal() ){
@@ -775,8 +796,6 @@ location.reload();
                 }
               });
               frontier = frontierPQ.printPriorityQueue();
-            // explored.push(selectNode.attribute('data-node') )
-            // frontier = frontier.filter(e =>{ return e != selectNode.attribute('data-node') })
         
             console.log("frontier : ", frontier);
             console.log("explored : ", exploredSet);
@@ -805,8 +824,7 @@ location.reload();
         console.log(exploredSet);
         let frontier = frontierPQ.printPriorityQueue();
         console.log(frontier);
-        // let pickNode = frontierPQ.dequeueFunction()
-        // console.log(pickNode);
+
         let pickNode
         let j = 0 ;
         while(!state.isGoal() ){
@@ -837,8 +855,7 @@ location.reload();
               });
               console.log(exploredSet);
               frontier = frontierPQ.printPriorityQueue();
-            // explored.push(selectNode.attribute('data-node') )
-            // frontier = frontier.filter(e =>{ return e != selectNode.attribute('data-node') })
+   
         
             console.log("frontier : ", frontier);
             console.log("explored : ", exploredSet);
@@ -868,8 +885,6 @@ location.reload();
         console.log(exploredSet);
         let frontier = frontierPQ.printPriorityQueue();
         console.log(frontier);
-        // let pickNode = frontierPQ.dequeueFunction()
-        // console.log(pickNode);
         let pickNode
         let j = 0 ;
         while(!state.isGoal() ){
@@ -900,8 +915,7 @@ location.reload();
               });
               console.log(exploredSet);
               frontier = frontierPQ.printPriorityQueue();
-            // explored.push(selectNode.attribute('data-node') )
-            // frontier = frontier.filter(e =>{ return e != selectNode.attribute('data-node') })
+
         
             console.log("frontier : ", frontier);
             console.log("explored : ", exploredSet);
@@ -923,6 +937,7 @@ location.reload();
 
 }
 
+// END SEARCH ALGORITHM
 
 
 function getKey(node){
